@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaperTrail — Scientific Claim & Literature Discovery Engine</title>
+    <meta name="description" content="PaperTrail is a prototype for helping researchers check scientific claims against published research using the live Europe PMC database.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Demo Data for Evidence Assessments & Presets -->
+    <script src="demoData.js"></script>
+</head>
+<body class="theme-dark">
+
+    <!-- Top Glow Background Decor -->
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar glass">
+        <div class="nav-container">
+            <div class="nav-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})" id="nav-brand-logo">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                        <circle cx="17" cy="15" r="4.5" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="2"></circle>
+                        <line x1="20" y1="18.5" x2="22" y2="20.5" stroke="var(--primary)" stroke-width="2.5"></line>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <div class="brand-title">Paper<span>Trail</span></div>
+                    <div class="brand-tagline">Scientific Claim &amp; Discovery</div>
+                </div>
+            </div>
+
+            <div class="nav-status-badge" id="api-status-badge">
+                <span class="status-dot"></span>
+                <span class="status-label">Europe PMC Connected</span>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="nav-tab active" id="tab-btn-live" onclick="switchMainTab('live')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Live Europe PMC Search
+                </button>
+                <button class="nav-tab" id="tab-btn-demo" onclick="switchMainTab('demo')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Evidence Assessments <span class="badge-mini">Demo</span>
+                </button>
+                <button class="nav-tab" id="tab-btn-about" onclick="openAboutModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    About Prototype
+                </button>
+            </div>
+
+            <div class="nav-actions">
+                <button class="icon-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                    <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge">
+                <span class="badge-icon">🔬</span>
+                <span>Europe PMC Literature Verification Prototype</span>
+            </div>
+            <h1 class="hero-title">Check Scientific Claims Against Published Research</h1>
+            <p class="hero-subtitle">
+                Search millions of life-sciences and biomedical papers, clinical investigations, and peer-reviewed preprints from 
+                <strong>Europe PMC</strong>. Inspect paper titles, author networks, abstracts, open-access full texts, and real citation metrics.
+            </p>
+
+            <!-- Prototype Clarification Alert -->
+            <div class="prototype-banner glass">
+                <div class="banner-icon">💡</div>
+                <div class="banner-content">
+                    <div class="banner-heading">
+                        <strong>Paper Discovery Demo</strong> &bull; Live Literature Verification
+                    </div>
+                    <div class="banner-text">
+                        PaperTrail connects in real-time to the public <strong>Europe PMC</strong> database for you to inspect real papers. 
+                        It does not yet use automated AI models to extract claims or score study stance (Supports / Contradicts / Inconclusive). 
+                        To preview the intended AI evidence assessment design, explore our 
+                        <a href="javascript:void(0)" onclick="switchMainTab('demo')">curated assessment demos</a>.
+                    </div>
+                </div>
+                <div class="banner-action">
+                    <button class="btn btn-sm btn-outline" onclick="switchMainTab('demo')">View Demo Assessments &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Search Console -->
+            <div class="search-console glass" id="search-console">
+                <div class="search-bar-wrapper">
+                    <div class="search-input-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="claim-search-input" 
+                        class="search-input" 
+                        placeholder="Enter a scientific question or claim (e.g. Does intermittent fasting improve insulin sensitivity?)..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearchInput()" title="Clear query" style="display: none;">
+                        &times;
+                    </button>
+                    <button class="btn btn-primary search-submit-btn" id="search-submit-btn" onclick="handleSearchSubmit()">
+                        <span>Search Papers</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </div>
+
+                <!-- Suggested Query Pills -->
+                <div class="preset-queries-row">
+                    <span class="preset-label">Suggested Claims:</span>
+                    <div class="preset-pills" id="preset-pills-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Search Filters & Options -->
+                <div class="filters-bar" id="filters-bar">
+                    <div class="filter-group">
+                        <label for="filter-sort">Sort By:</label>
+                        <select id="filter-sort" onchange="handleFilterChange()">
+                            <option value="">Relevance</option>
+                            <option value="CITED DESC">Most Cited</option>
+                            <option value="P_PDATE_D DESC">Newest Publications</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filter-years">Timeframe:</label>
+                        <select id="filter-years" onchange="handleFilterChange()">
+                            <option value="all">All Years</option>
+                            <option value="2024-2026">2024 – 2026</option>
+                            <option value="last5">Last 5 Years</option>
+                            <option value="last10">Last 10 Years</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group checkboxes">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="filter-oa" onchange="handleFilterChange()">
+                            <span class="checkmark"></span>
+                            <span class="check-label">Open Access Only</span>
+                        </label>
+
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="filter-abstract" checked onchange="handleFilterChange()">
+                            <span class="checkmark"></span>
+                            <span class="check-label">Has Abstract</span>
+                        </label>
+
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="filter-review" onchange="handleFilterChange()">
+                            <span class="checkmark"></span>
+                            <span class="check-label">Reviews &amp; Meta-Analyses</span>
+                        </label>
+                    </div>
+
+                    <div class="filter-group page-size-group">
+                        <label for="filter-page-size">Show:</label>
+                        <select id="filter-page-size" onchange="handleFilterChange()">
+                            <option value="10">10 / page</option>
+                            <option value="25" selected>25 / page</option>
+                            <option value="50">50 / page</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 1: Live Europe PMC Search Results -->
+        <section id="view-live-search" class="tab-view active">
+            
+            <!-- Results Meta Bar -->
+            <div class="results-meta-bar glass" id="results-meta-bar" style="display: none;">
+                <div class="meta-left">
+                    <div class="meta-title" id="meta-query-text">Search Results</div>
+                    <div class="meta-details" id="meta-query-stats">
+                        <span id="stat-hits-count">0</span> matching papers found in Europe PMC &bull; <span id="stat-latency">0ms</span>
+                    </div>
+                </div>
+                <div class="meta-right">
+                    <button class="btn btn-sm btn-outline" onclick="copyCurrentSearchUrl()" title="Copy shareable link">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        Share Query
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="exportResultsBibTeX()" title="Export results to BibTeX">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Export BibTeX
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading Skeleton State -->
+            <div class="skeleton-container" id="results-loading-skeleton" style="display: none;">
+                <div class="skeleton-card glass shimmer">
+                    <div class="sk-line sk-title"></div>
+                    <div class="sk-line sk-meta"></div>
+                    <div class="sk-line sk-abstract"></div>
+                    <div class="sk-line sk-abstract-short"></div>
+                </div>
+                <div class="skeleton-card glass shimmer">
+                    <div class="sk-line sk-title"></div>
+                    <div class="sk-line sk-meta"></div>
+                    <div class="sk-line sk-abstract"></div>
+                    <div class="sk-line sk-abstract-short"></div>
+                </div>
+                <div class="skeleton-card glass shimmer">
+                    <div class="sk-line sk-title"></div>
+                    <div class="sk-line sk-meta"></div>
+                    <div class="sk-line sk-abstract"></div>
+                    <div class="sk-line sk-abstract-short"></div>
+                </div>
+            </div>
+
+            <!-- Papers Feed Container -->
+            <div class="papers-feed" id="papers-feed-container">
+                <!-- Initial Welcome State -->
+                <div class="empty-state glass">
+                    <div class="empty-icon">📚</div>
+                    <h3>Start Checking a Scientific Claim</h3>
+                    <p>Enter any research hypothesis or question in the search bar above, or click one of the suggested claims like <em>"Does intermittent fasting improve insulin sensitivity in humans?"</em>.</p>
+                    <div class="empty-tips">
+                        <div class="tip-item">
+                            <span class="tip-dot"></span>
+                            <span><strong>Live API:</strong> Queries are executed directly against Europe PMC's REST API.</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-dot"></span>
+                            <span><strong>Rich Metadata:</strong> Inspect peer-reviewed journals, citation scores, DOIs, PMIDs, and full abstracts.</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-dot"></span>
+                            <span><strong>Direct Open Access:</strong> Instant links to open access PMC full texts and publisher landing pages.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="pagination-bar glass" id="pagination-bar" style="display: none;">
+                <button class="btn btn-outline btn-sm" id="btn-prev-page" onclick="goToPrevPage()">
+                    &larr; Previous Page
+                </button>
+                <div class="page-indicator" id="page-indicator-text">
+                    Page 1
+                </div>
+                <button class="btn btn-outline btn-sm" id="btn-next-page" onclick="goToNextPage()">
+                    Next Page &rarr;
+                </button>
+            </div>
+
+        </section>
+
+        <!-- VIEW 2: Example Evidence Assessments (Design Vision Demo) -->
+        <section id="view-evidence-demo" class="tab-view">
+            <div class="demo-header-card glass">
+                <div class="demo-badge-row">
+                    <span class="pill-badge pill-purple">Future AI Architecture Concept</span>
+                    <span class="pill-badge pill-cyan">Demo Evidence Synthesis</span>
+                </div>
+                <h2>Interactive Evidence Assessment Previews</h2>
+                <p>
+                    These curated examples showcase the full vision of PaperTrail: using natural language processing to extract 
+                    structured scientific claims, classify individual study stances (<strong>Supports</strong>, <strong>Contradicts</strong>, 
+                    or <strong>Inconclusive</strong>), and synthesize evidence consensus with study-design weighting.
+                </p>
+                <div class="demo-selector-pills" id="demo-claim-selector">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div id="demo-assessment-detail-container">
+                <!-- Populated by JS for selected demo claim -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Paper Details & Citation Modal -->
+    <div class="modal-overlay" id="paper-modal" onclick="closeModalOnOverlay(event)">
+        <div class="modal-card glass" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-badge-group" id="modal-badges"></div>
+                <button class="modal-close-btn" onclick="closePaperModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-content">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <!-- Action buttons -->
+            </div>
+        </div>
+    </div>
+
+    <!-- About Prototype Modal -->
+    <div class="modal-overlay" id="about-modal" onclick="closeModalOnOverlay(event)">
+        <div class="modal-card glass" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>About the PaperTrail Prototype</h3>
+                <button class="modal-close-btn" onclick="closeAboutModal()">&times;</button>
+            </div>
+            <div class="modal-body modal-about-body">
+                <div class="about-section">
+                    <h4>What is PaperTrail?</h4>
+                    <p>PaperTrail is a prototype designed to bridge the gap between scientific hypotheses and published, peer-reviewed literature. Researchers, clinicians, and curious minds can enter natural language questions to query scientific databases and evaluate evidence.</p>
+                </div>
+                <div class="about-section">
+                    <h4>Current Capability: Live Paper Discovery</h4>
+                    <p>PaperTrail is currently configured as a <strong>live paper discovery engine</strong> powered by the <strong>Europe PMC REST API</strong> (the European Bioinformatics Institute database covering over 40 million articles, preprints, and patents).</p>
+                    <ul>
+                        <li>Searches biomedical &amp; life-sciences publications in real-time.</li>
+                        <li>Retrieves paper titles, author rosters, journal metrics, abstracts, and DOI/PMCID links.</li>
+                        <li>Filters by Open Access status, publication year, and review articles.</li>
+                    </ul>
+                </div>
+                <div class="about-section">
+                    <h4>Roadmap: Automated Evidence Synthesis</h4>
+                    <p>In upcoming phases, PaperTrail will integrate AI reasoning models to:</p>
+                    <ol>
+                        <li>Extract atomic, testable claims from user questions.</li>
+                        <li>Analyze study methodologies (Randomized Controlled Trials vs. Observational vs. In Vitro).</li>
+                        <li>Classify each study's findings as Supporting, Contradicting, or Weakening the claim.</li>
+                        <li>Generate transparent consensus summaries with confidence intervals.</li>
+                    </ol>
+                </div>
+                <div class="about-section">
+                    <h4>Data Attribution</h4>
+                    <p>Paper metadata and abstracts provided courtesy of <a href="https://europepmc.org/" target="_blank" rel="noopener noreferrer">Europe PMC</a> under open data licenses. No API key required.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeAboutModal()">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toast-notification"></div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
